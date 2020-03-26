@@ -15,6 +15,24 @@ CSSEGISandData <- read_csv(glue("https://raw.githubusercontent.com/CSSEGISandDat
 # this commented out line is live data - only I haven't worked out how to use it yet - anyone familiar with loading this into a decent format welcome to help out!
 # ffg<- read_file("https://covid19-report.today/api/latest-report")
 
+
+library(jsonlite)
+ffg <- fromJSON("https://covid19-report.today/api/latest-report/")
+
+ 
+ffg.new <- as_tibble(ffg$report[2:nrow(ffg$report),], .name_repair= ~ffg$report[1,])
+ffg.new 
+
+ffg_totals <- as_tibble(t(ffg$totals[2,]), .name_repair= ~ffg$totals[1,])
+ffg_totals 
+
+ffg_last_update <- lubridate::as_datetime(ffg$lastUpdateTimestamp/1000, tz='UTC' )
+# not sure about the time zone, the web content did not appear to list a time zone
+ffg_last_update
+real_time_now <- as.numeric(Sys.time()) 
+real_time_now
+ 
+ 
 working_df <-
   CSSEGISandData %>% 
   group_by(`Country_Region`) %>% 
